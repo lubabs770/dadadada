@@ -26,7 +26,7 @@ body {
     radial-gradient(900px 480px at 108% -6%, color-mix(in srgb, var(--claude) 7%, transparent), transparent 60%),
     linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   background-size: auto, auto, 22px 22px, 22px 22px;
-  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); overflow: hidden;
+  display: grid; grid-template-rows: auto minmax(0, 1fr); grid-template-columns: minmax(0, 1fr); overflow: hidden;
 }
 button, select, input, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -64,7 +64,6 @@ header { display: flex; align-items: center; gap: 12px; padding: 9px 14px; borde
 .field input, .field select { background: none; border: 0; outline: none; height: 100%; }
 .field input { width: 150px; } .field select { max-width: 170px; }
 .field kbd, kbd { font: 11px var(--font); color: var(--fg2); border: 1px solid var(--line2); border-radius: 4px; padding: 0 4px; }
-.chips { display: flex; gap: 4px; flex-wrap: wrap; }
 .chip { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px; border-radius: 6px;
         border: 1px solid var(--line); background: var(--panel); font-size: 12px; color: var(--fg2); }
 .chip .g { color: var(--c); }
@@ -81,10 +80,13 @@ header { display: flex; align-items: center; gap: 12px; padding: 9px 14px; borde
 main { display: flex; min-height: 0; min-width: 0; }
 #boardwrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 #board { flex: 1; min-width: 0; display: flex; gap: 12px; padding: 12px 14px; overflow: auto; align-items: stretch; }
-.col { flex: 1 1 var(--colmin); min-width: var(--colmin); display: flex; flex-direction: column; --colmin: 250px; }
-.col.vacant { flex: 0 1 var(--colmin); --colmin: 150px; }
-body.side-open .col.vacant { --colmin: 104px; }
-body.compact .col { --colmin: 210px; } body.compact .col.vacant { --colmin: 104px; }
+.col { flex: 0 0 var(--colw); width: var(--colw); display: flex; flex-direction: column; --colw: 290px; }
+body.compact .col { --colw: 230px; }
+.col.rest { --colw: 150px; }
+.rest .colhead h2 { color: var(--muted); }
+.mini { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px dashed var(--line); border-radius: 8px;
+        color: var(--muted); font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+.mini .g { color: var(--c); opacity: .8; }
 .col.drop { outline: 1px dashed var(--c); outline-offset: 4px; border-radius: 10px; }
 .colhead { position: sticky; top: -12px; z-index: 2; display: flex; align-items: center; gap: 8px; padding: 10px 4px 9px;
            background: linear-gradient(var(--bg) 72%, transparent); cursor: grab; user-select: none; }
@@ -182,14 +184,14 @@ body.compact .card { padding: 8px 10px; }
 #ask button { border: 1px solid color-mix(in srgb, var(--blocked) 45%, var(--line)); background: var(--panel); color: var(--fg); border-radius: 6px; padding: 2px 9px; font-size: 12.5px; }
 #ask button:hover { background: color-mix(in srgb, var(--blocked) 18%, var(--panel)); }
 
-#termwrap { flex: 1; min-height: 0; background: #060708; position: relative; overflow: auto; padding: 10px; }
+#termwrap { flex: 1; min-height: 0; background: var(--term-bg); position: relative; overflow: auto; padding: 10px; }
 #termwrap.typing { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--blocked) 70%, transparent); }
 #term .xterm-viewport { background: transparent !important; }
-#termnote { position: absolute; right: 14px; bottom: 12px; font-size: 11.5px; color: #8b95a0; background: #11151a; border: 1px solid #222a32; padding: 2px 8px; border-radius: 5px; pointer-events: none; }
+#termnote { position: absolute; right: 14px; bottom: 12px; font-size: 11.5px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); padding: 2px 8px; border-radius: 5px; pointer-events: none; }
 .sidefoot { display: flex; gap: 14px; padding: 6px 12px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); flex-wrap: wrap; }
 
 /* ---------- chat ---------- */
-#chat { flex: 1; min-height: 0; display: flex; flex-direction: column; background: #0a0b0d; }
+#chat { flex: 1; min-height: 0; display: flex; flex-direction: column; background: var(--chat-bg); }
 #msgs { flex: 1; overflow-y: auto; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
 .msg { max-width: 88%; animation: enter .2s ease-out both; }
 .msg.user { align-self: flex-end; background: color-mix(in srgb, var(--working) 14%, var(--panel)); border: 1px solid color-mix(in srgb, var(--working) 30%, var(--line));
@@ -203,8 +205,8 @@ body.compact .card { padding: 8px 10px; }
 .md > :first-child { margin-top: 0; } .md > :last-child { margin-bottom: 0; }
 .md p, .md ul, .md ol { margin: .45em 0; } .md ul, .md ol { padding-left: 1.3em; }
 .md h1, .md h2, .md h3, .md h4 { font-size: 1em; margin: .8em 0 .3em; color: var(--fg); }
-.md code { background: var(--bg2); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: .95em; color: #ffd28a; }
-.md pre { background: #060708; border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; overflow-x: auto; }
+.md code { background: var(--bg2); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: .95em; color: var(--yellow); }
+.md pre { background: var(--term-bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; overflow-x: auto; }
 .md pre code { background: none; border: 0; padding: 0; color: var(--fg2); }
 .md a { color: var(--working); }
 .md table { border-collapse: collapse; font-size: .95em; display: block; overflow-x: auto; }
@@ -251,6 +253,36 @@ dialog::backdrop { background: rgba(4,5,7,.7); backdrop-filter: blur(3px); }
 .pi small { margin-left: auto; color: var(--muted); }
 .pi.on { background: var(--panel2); box-shadow: inset 2px 0 0 var(--working); }
 
+/* theme picker */
+#themeDlg { width: min(900px, calc(100vw - 32px)); }
+.tgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; max-height: 62vh; overflow: auto; padding: 2px; }
+.tcard { border: 1px solid var(--line2); border-radius: 10px; padding: 0; overflow: hidden; text-align: left; background: none; display: flex; flex-direction: column; }
+.tcard .sw { height: 54px; display: flex; flex-direction: column; justify-content: space-between; padding: 7px 8px; }
+.tcard .sw .ln { height: 5px; border-radius: 3px; width: 70%; }
+.tcard .sw .dots { display: flex; gap: 4px; } .tcard .sw .dots i { width: 12px; height: 12px; border-radius: 3px; }
+.tcard .nm { padding: 6px 9px; font-size: 12.5px; display: flex; justify-content: space-between; gap: 6px; }
+.tcard .nm small { opacity: .6; }
+.tcard.on { outline: 2px solid var(--working); outline-offset: 1px; }
+.tcard:hover { transform: translateY(-1px); }
+/* lane resizing */
+.col { position: relative; }
+.col.sized { --colw: var(--w); }
+.lane-grip { position: absolute; top: 4px; bottom: 0; right: -9px; width: 6px; border-radius: 3px; cursor: col-resize; z-index: 3; }
+.lane-grip:hover, .lane-grip.drag { background: color-mix(in srgb, var(--c) 55%, transparent); }
+body.resizing, body.resizing * { cursor: col-resize !important; user-select: none !important; }
+@media (max-width: 900px) { .lane-grip { display: none; } }
+
+.menu { position: fixed; top: 50px; right: 14px; z-index: 40; width: 270px; max-height: calc(100vh - 70px); overflow-y: auto;
+        background: var(--panel); border: 1px solid var(--line2); border-radius: 12px; padding: 6px; box-shadow: 0 24px 60px -18px rgba(0,0,0,.6); }
+.mi { display: flex; align-items: center; gap: 10px; width: 100%; padding: 7px 9px; border: 0; background: none; border-radius: 7px; text-align: left; font-size: 13px; color: var(--fg); }
+.mi:hover { background: var(--panel2); }
+.mi .g { color: var(--c, var(--fg2)); width: 16px; }
+.mi .r { margin-left: auto; color: var(--muted); font-size: 12px; }
+.mi.off { color: var(--muted); } .mi.off .g { opacity: .4; }
+.menu hr { border: 0; border-top: 1px solid var(--line); margin: 5px 4px; }
+.menu .lbl { font-size: 10.5px; color: var(--muted); letter-spacing: .16em; text-transform: uppercase; padding: 6px 9px 2px; }
+.menu .keys { font-size: 11.5px; color: var(--muted); padding: 4px 9px 6px; line-height: 1.7; }
+.sidefoot:empty { display: none; }
 footer { display: flex; gap: 14px; align-items: center; padding: 5px 14px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); background: var(--bg2); flex-wrap: wrap; }
 footer kbd { margin-right: 3px; }
 #banner { display: none; margin: 12px 14px 0; padding: 9px 12px; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--blocked) 50%, var(--line)); color: var(--blocked); font-size: 13px; background: color-mix(in srgb, var(--blocked) 8%, transparent); }
@@ -258,7 +290,7 @@ footer kbd { margin-right: 3px; }
 
 @media (max-width: 900px) {
   main { flex-direction: column; }
-  #board { flex-direction: column; } .col, .col.vacant { --colmin: auto; flex: none; }
+  #board { flex-direction: column; } .col { --colw: auto; width: auto; flex: none; }
   .colhead { position: static; }
   #side { width: 100%; max-width: none; min-width: 0; height: 60vh; border-left: 0; border-top: 1px solid var(--line); }
   #grip, footer, .limits { display: none; }
@@ -275,10 +307,8 @@ footer kbd { margin-right: 3px; }
   <div class="limits" id="limits"></div>
   <label class="field" title="Filter cards (/)"><i class="g">&#xf002;</i><input id="q" type="search" placeholder="filter" aria-label="Filter cards"><kbd>/</kbd></label>
   <label class="field" title="Show one space"><i class="g">&#xf00a;</i><select id="scope" aria-label="Space"></select></label>
-  <div class="chips" id="chips"></div>
-  <button class="iconbtn" id="densityBtn" title="Compact cards (c)"><i class="g">&#xf0c9;</i></button>
-  <button class="iconbtn" id="notifyBtn" title="Notification + sound when an agent needs you"><i class="g">&#xf0f3;</i></button>
-  <button class="iconbtn" id="palBtn" title="Command palette (⌘K)"><i class="g">&#xf120;</i><kbd>⌘K</kbd></button>
+  <button class="iconbtn" id="menuBtn" title="Lanes, theme, alerts" aria-haspopup="true"><i class="g">&#xf013;</i></button>
+  <button class="iconbtn" id="palBtn" title="Command palette (⌘K)"><kbd>⌘K</kbd></button>
   <button class="iconbtn primary" id="newBtn" title="New agent or terminal (n)"><i class="g">&#xf067;</i>New</button>
 </header>
 <main>
@@ -304,11 +334,7 @@ footer kbd { margin-right: 3px; }
     <div class="sidefoot" id="sidefoot"></div>
   </aside>
 </main>
-<footer>
-  <span><kbd>j</kbd><kbd>k</kbd>move</span><span><kbd>↵</kbd>open</span><span><kbd>v</kbd>chat/terminal</span><span><kbd>i</kbd>type</span>
-  <span><kbd>n</kbd>new</span><span><kbd>⌘K</kbd>palette</span><span><kbd>f</kbd>focus in herdr</span><span><kbd>p</kbd>pin</span><span><kbd>esc</kbd>close</span>
-  <span class="spacer"></span><span id="sess"></span>
-</footer>
+<div class="menu" id="menu" hidden></div>
 
 <dialog id="newDlg"><form class="dlg" id="newForm" method="dialog">
   <h3><i class="g" style="color:var(--claude)">&#xf067;</i>New</h3>
@@ -322,6 +348,11 @@ footer kbd { margin-right: 3px; }
 </form></dialog>
 
 <dialog id="palette"><input id="pq" placeholder="Type a command or an agent…" autocomplete="off" spellcheck="false"><div id="plist"></div></dialog>
+<dialog id="themeDlg"><div class="dlg">
+  <h3><i class="g" style="color:var(--magenta)">&#xf1fc;</i>Themes <small style="color:var(--muted);font-weight:500;letter-spacing:0">hover to preview · click to keep</small></h3>
+  <div class="tgrid" id="tgrid"></div>
+  <div class="foot"><span class="msg2" id="tName"></span><button type="button" class="iconbtn" id="tRandom" title="A new random theme every click">&#x1f3b2; random</button><button type="button" class="iconbtn" id="tClose">Done</button></div>
+</div></dialog>
 <div id="toast" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.js"></script>
@@ -329,6 +360,78 @@ footer kbd { margin-right: 3px; }
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <script>
 "use strict";
+// ---------- themes ----------
+// [dark, bg, bg2, panel, panel2, line, line2, fg, fg2, muted, red, green, yellow, blue, magenta, cyan, orange]
+const THEMES = {
+  "Midnight":            [1, "#08090b", "#0d0f12", "#121519", "#171b20", "#22282f", "#2f3740", "#e9edf0", "#aeb8c1", "#69737d", "#ff6b6b", "#63e58f", "#ffb02e", "#5aa9ff", "#ad8fff", "#3ad6ec", "#e8875b"],
+  "Tokyo Night":         [1, "#1a1b26", "#16161e", "#1f2335", "#24283b", "#292e42", "#3b4261", "#c0caf5", "#a9b1d6", "#565f89", "#f7768e", "#9ece6a", "#e0af68", "#7aa2f7", "#bb9af7", "#7dcfff", "#ff9e64"],
+  "Catppuccin Mocha":    [1, "#1e1e2e", "#181825", "#232334", "#2a2b3c", "#313244", "#45475a", "#cdd6f4", "#bac2de", "#6c7086", "#f38ba8", "#a6e3a1", "#f9e2af", "#89b4fa", "#cba6f7", "#94e2d5", "#fab387"],
+  "Catppuccin Macchiato":[1, "#24273a", "#1e2030", "#2a2d42", "#303347", "#363a4f", "#494d64", "#cad3f5", "#b8c0e0", "#6e738d", "#ed8796", "#a6da95", "#eed49f", "#8aadf4", "#c6a0f6", "#8bd5ca", "#f5a97f"],
+  "Catppuccin Frappé":   [1, "#303446", "#292c3c", "#353a50", "#3b3f54", "#414559", "#51576d", "#c6d0f5", "#b5bfe2", "#737994", "#e78284", "#a6d189", "#e5c890", "#8caaee", "#ca9ee6", "#81c8be", "#ef9f76"],
+  "Catppuccin Latte":    [0, "#eff1f5", "#e6e9ef", "#ffffff", "#f5f6f9", "#ccd0da", "#bcc0cc", "#4c4f69", "#5c5f77", "#8c8fa1", "#d20f39", "#40a02b", "#df8e1d", "#1e66f5", "#8839ef", "#179299", "#fe640b"],
+  "Gruvbox Dark":        [1, "#1d2021", "#282828", "#32302f", "#3c3836", "#3c3836", "#504945", "#ebdbb2", "#d5c4a1", "#928374", "#fb4934", "#b8bb26", "#fabd2f", "#83a598", "#d3869b", "#8ec07c", "#fe8019"],
+  "Gruvbox Light":       [0, "#fbf1c7", "#f2e5bc", "#fdf6d8", "#f9f0cd", "#d5c4a1", "#bdae93", "#3c3836", "#504945", "#928374", "#9d0006", "#79740e", "#b57614", "#076678", "#8f3f71", "#427b58", "#af3a03"],
+  "Nord":                [1, "#2e3440", "#2b303b", "#3b4252", "#434c5e", "#434c5e", "#4c566a", "#eceff4", "#d8dee9", "#7b88a1", "#bf616a", "#a3be8c", "#ebcb8b", "#81a1c1", "#b48ead", "#88c0d0", "#d08770"],
+  "Dracula":             [1, "#282a36", "#21222c", "#2f3241", "#343746", "#3a3c4e", "#44475a", "#f8f8f2", "#d6d6cf", "#6272a4", "#ff5555", "#50fa7b", "#f1fa8c", "#bd93f9", "#ff79c6", "#8be9fd", "#ffb86c"],
+  "Rosé Pine":           [1, "#191724", "#16141f", "#1f1d2e", "#26233a", "#26233a", "#403d52", "#e0def4", "#c8c5e0", "#6e6a86", "#eb6f92", "#3e8fb0", "#f6c177", "#9ccfd8", "#c4a7e7", "#9ccfd8", "#ebbcba"],
+  "Rosé Pine Dawn":      [0, "#faf4ed", "#f2e9e1", "#fffaf3", "#f4ede8", "#dfdad9", "#cecacd", "#575279", "#797593", "#9893a5", "#b4637a", "#286983", "#ea9d34", "#56949f", "#907aa9", "#56949f", "#d7827e"],
+  "Solarized Dark":      [1, "#002b36", "#00252e", "#073642", "#0a3f4c", "#0d4553", "#586e75", "#eee8d5", "#93a1a1", "#657b83", "#dc322f", "#859900", "#b58900", "#268bd2", "#d33682", "#2aa198", "#cb4b16"],
+  "Solarized Light":     [0, "#fdf6e3", "#eee8d5", "#fffbef", "#f5efdc", "#e0dac5", "#c9c2ab", "#073642", "#586e75", "#93a1a1", "#dc322f", "#859900", "#b58900", "#268bd2", "#d33682", "#2aa198", "#cb4b16"],
+  "One Dark":            [1, "#21252b", "#1b1f23", "#282c34", "#2c313a", "#333842", "#3e4451", "#dcdfe4", "#abb2bf", "#5c6370", "#e06c75", "#98c379", "#e5c07b", "#61afef", "#c678dd", "#56b6c2", "#d19a66"],
+  "Everforest":          [1, "#232a2e", "#1e2326", "#2d353b", "#343f44", "#3d484d", "#475258", "#d3c6aa", "#b9ae94", "#859289", "#e67e80", "#a7c080", "#dbbc7f", "#7fbbb3", "#d699b6", "#83c092", "#e69875"],
+  "Kanagawa":            [1, "#1f1f28", "#16161d", "#2a2a37", "#363646", "#363646", "#54546d", "#dcd7ba", "#c8c093", "#727169", "#e46876", "#98bb6c", "#e6c384", "#7e9cd8", "#957fb8", "#7fb4ca", "#ffa066"],
+  "GitHub Dark":         [1, "#0d1117", "#010409", "#161b22", "#1c2128", "#21262d", "#30363d", "#e6edf3", "#c9d1d9", "#7d8590", "#ff7b72", "#3fb950", "#d29922", "#58a6ff", "#bc8cff", "#39c5cf", "#f0883e"],
+  "GitHub Light":        [0, "#f6f8fa", "#eaeef2", "#ffffff", "#f6f8fa", "#d0d7de", "#afb8c1", "#1f2328", "#424a53", "#6e7781", "#cf222e", "#1a7f37", "#9a6700", "#0969da", "#8250df", "#1b7c83", "#bc4c00"],
+  "Monokai":             [1, "#272822", "#1e1f1c", "#2f302a", "#36372f", "#3e3d32", "#49483e", "#f8f8f2", "#cfcfc2", "#75715e", "#f92672", "#a6e22e", "#e6db74", "#66d9ef", "#ae81ff", "#a1efe4", "#fd971f"],
+  "Ayu Mirage":          [1, "#1f2430", "#1a1f29", "#242936", "#2a3040", "#2d3446", "#3a4256", "#cccac2", "#b8b4a8", "#707a8c", "#f28779", "#d5ff80", "#ffd173", "#73d0ff", "#dfbfff", "#95e6cb", "#ffad66"],
+  "Synthwave '84":       [1, "#262335", "#1e1a2e", "#2a2139", "#34294f", "#34294f", "#495495", "#ffffff", "#e0dfff", "#848bbd", "#fe4450", "#72f1b8", "#fede5d", "#36f9f6", "#ff7edb", "#36f9f6", "#f97e72"],
+  "Oxocarbon":           [1, "#161616", "#0f0f0f", "#1e1e1e", "#262626", "#2a2a2a", "#393939", "#f2f4f8", "#dde1e6", "#6f6f6f", "#ee5396", "#42be65", "#f1c21b", "#78a9ff", "#be95ff", "#33b1ff", "#ff7eb6"],
+  "Phosphor":            [1, "#030a04", "#020702", "#071208", "#0b1a0c", "#12301a", "#1d4a26", "#9cff9c", "#6fdc76", "#3f8a48", "#ff5f56", "#33ff66", "#d4ff3a", "#3affb0", "#a3ff7a", "#5cffd2", "#ffb000"],
+  "Amber CRT":           [1, "#0c0700", "#080500", "#140c02", "#1c1104", "#2e1d06", "#4a2f0a", "#ffcf75", "#e0a84a", "#8a6420", "#ff6a3d", "#ffd36b", "#ffb000", "#ffc35a", "#ff9a3d", "#ffe08a", "#ff8c1a"],
+  "Paper":               [0, "#f4f1ea", "#ebe7dd", "#fbf9f4", "#ffffff", "#ddd7c9", "#c9c1ae", "#1d1b16", "#4a463c", "#8a8474", "#c0392b", "#2e7d32", "#b7791f", "#2c5aa0", "#7b3fa0", "#00838f", "#d35400"],
+};
+const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, t) => "#" + hex(a).map((v, i) => Math.round(v + (hex(b)[i] - v) * t).toString(16).padStart(2, "0")).join("");
+function hsl(h, s, l) {
+  s /= 100; l /= 100;
+  const f = n => { const k = (n + h / 30) % 12, c = l - s * Math.min(l, 1 - l) * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(255 * c).toString(16).padStart(2, "0"); };
+  return "#" + f(0) + f(8) + f(4);
+}
+function randomTheme(seed) {
+  // a seeded, always-readable random theme: tinted dark (or light) base + evenly spread accents
+  let x = seed; const rnd = () => ((x = (x * 1103515245 + 12345) % 2147483648) / 2147483648);
+  const h = Math.floor(rnd() * 360), dark = rnd() > .2, s = 18 + rnd() * 30, a = 65 + rnd() * 25, al = dark ? 66 : 42;
+  const base = dark ? [6, 9, 12, 15, 20, 28, 92, 74, 50] : [95, 91, 98, 100, 84, 76, 12, 30, 52];
+  const acc = [0, 135, 45, 215, 280, 185, 25].map(o => hsl((h + o + rnd() * 20) % 360, a, al));
+  return [dark ? 1 : 0, ...base.map((l, i) => hsl(h, i >= 6 ? s * .4 : s, l)), ...acc];
+}
+let themeName = store0("theme", "Midnight");
+function store0(k, d) { try { const v = localStorage.getItem("hk3." + k); return v == null ? d : JSON.parse(v); } catch { return d; } }
+const themeOf = name => THEMES[name] || (name?.startsWith("Random #") ? randomTheme(+name.slice(8)) : THEMES.Midnight);
+function applyTheme(name, persist = true) {
+  const [dark, bg, bg2, panel, panel2, line, line2, fg, fg2, muted, red, green, yellow, blue, magenta, cyan, orange] = themeOf(name);
+  const v = { bg, bg2, panel, panel2, line, line2, fg, fg2, muted, red, green, yellow, blue, magenta, cyan, orange,
+    blocked: yellow, working: cyan, waiting: magenta, done: green, idle: muted, shell: blue, unknown: muted,
+    claude: orange, work: yellow, personal: green, danger: red,
+    "term-bg": dark ? mix(bg, "#000000", .35) : mix(bg, "#ffffff", .5), "chat-bg": dark ? mix(bg, "#000000", .15) : bg2,
+    grid: dark ? "rgba(255,255,255,.022)" : "rgba(0,0,0,.035)",
+    shadow: dark ? "0 1px 0 rgba(255,255,255,.03) inset, 0 10px 28px -14px rgba(0,0,0,.7)" : "0 1px 0 rgba(255,255,255,.7) inset, 0 8px 22px -14px rgba(0,0,0,.28)" };
+  const root = document.documentElement.style;
+  for (const [k, val] of Object.entries(v)) root.setProperty("--" + k, val);
+  root.setProperty("color-scheme", dark ? "dark" : "light");
+  if (window.kanbanTerm) window.kanbanTerm.options.theme = xtermTheme();  // the terminal is made further down
+  if (persist) { themeName = name; try { localStorage.setItem("hk3.theme", JSON.stringify(name)); } catch {} }
+}
+function xtermTheme() {
+  const [dark, bg, , , , , line2, fg, fg2, muted, red, green, yellow, blue, magenta, cyan] = themeOf(themeName);
+  const tb = dark ? mix(bg, "#000000", .35) : mix(bg, "#ffffff", .5), lift = c => mix(c, dark ? "#ffffff" : "#000000", .25);
+  return { background: tb, foreground: fg, cursor: tb, selectionBackground: mix(tb, blue, .35),
+    black: dark ? line2 : fg, red, green, yellow, blue, magenta, cyan, white: dark ? fg2 : line2,
+    brightBlack: muted, brightRed: lift(red), brightGreen: lift(green), brightYellow: lift(yellow), brightBlue: lift(blue),
+    brightMagenta: lift(magenta), brightCyan: lift(cyan), brightWhite: dark ? "#ffffff" : "#000000" };
+}
+applyTheme(themeName, false);
+
 // ---------- glyphs (Nerd Font) ----------
 const G = { claude: "✳", opencode: "", copilot: "", codex: "", shell: "", agent: "",
   bell: "", spin: "", hourglass: "", check: "", moon: "", question: "", term: "",
@@ -340,8 +443,8 @@ const COLS = {
   blocked: { name: "Needs you", g: G.bell }, working: { name: "Working", g: G.spin }, waiting: { name: "Waiting", g: G.hourglass },
   done: { name: "Done", g: G.check }, idle: { name: "Idle", g: G.moon }, shell: { name: "Terminals", g: G.term }, unknown: { name: "Unknown", g: G.question },
 };
-const KIND = { claude: { g: G.claude, c: "var(--claude)" }, opencode: { g: G.opencode, c: "#7aa2f7" }, copilot: { g: G.copilot, c: "#c0caf5" },
-  codex: { g: G.codex, c: "#9ece6a" }, shell: { g: G.shell, c: "var(--shell)" } };
+const KIND = { claude: { g: G.claude, c: "var(--claude)" }, opencode: { g: G.opencode, c: "var(--blue)" }, copilot: { g: G.copilot, c: "var(--fg2)" },
+  codex: { g: G.codex, c: "var(--green)" }, shell: { g: G.shell, c: "var(--shell)" } };
 const TOOL_G = { Bash: G.term, Read: G.file, Edit: "", Write: "", MultiEdit: "", Grep: G.search, Glob: G.search,
   Agent: "", Task: "", WebFetch: "", WebSearch: "", Skill: "", TodoWrite: "" };
 
@@ -357,13 +460,14 @@ const store = {
 let state = { cards: [], workspaces: [], limits: {} };
 let meta = { accounts: [], kinds: [], folders: [], home: "" };
 let order = store.get("order", Object.keys(COLS));
-for (const k of Object.keys(COLS)) if (!order.includes(k)) order.push(k);
+for (const k of [...Object.keys(COLS), "rest"]) if (!order.includes(k)) order.push(k);  // "rest" = the lane of empty lanes
 let hidden = new Set(store.get("hidden", []));
 let pins = new Set(store.get("pins", []));
 let scope = store.get("scope", "");
 let compact = store.get("compact", false);
 let notify = store.get("notify", false);
 let view = store.get("view", "chat");
+let laneW = store.get("laneW", {}), resizing = null;
 let selected = null, prevStatus = null, typing = false, history = false, pendingSelect = null;
 
 const hue = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);
@@ -396,7 +500,7 @@ function visibleCards() {
 }
 function columns() {
   const cards = visibleCards();
-  return order.filter(k => !hidden.has(k) && (k !== "unknown" || cards.some(c => c.status === k))).map(k => ({
+  return order.filter(k => COLS[k] && !hidden.has(k) && (k !== "unknown" || cards.some(c => c.status === k))).map(k => ({
     k, cards: cards.filter(c => c.status === k).sort((a, b) => (pins.has(b.pane) - pins.has(a.pane)) || (a.since - b.since) * (k === "blocked" ? 1 : -1)),
   }));
 }
@@ -418,7 +522,7 @@ function cardHTML(c) {
     <div class="meta">
       ${c.branch ? `<span class="tag" title="git branch">${g(G.branch)}${esc(c.branch)}</span>` : ""}
       ${folder !== c.workspace ? `<span class="tag" title="${esc(c.cwd)}">${g(G.folder)}${esc(folder)}</span>` : ""}
-      ${c.external ? `<span class="tag" style="color:var(--waiting)" title="Claude Code running outside herdr">outside herdr</span>` : `<span class="tag" title="pane ${esc(c.pane)}">${g(G.tab)}tab ${esc(c.tab ?? "?")}</span>`}
+      ${c.external ? `<span class="tag" style="color:var(--waiting)" title="Claude Code running outside herdr">outside herdr</span>` : ""}
       ${c.hud?.cost != null ? `<span class="tag" title="session cost">${g(G.dollar)}${c.hud.cost.toFixed(2)}</span>` : ""}
     </div>
     ${pct != null || c.hud?.ctxUsed ? `<div class="ctx" title="context window">${esc(shortModel(c.hud.model))}<span class="track"><i style="width:${pct ?? 0}%;--lc:${lvl(pct ?? 0)}"></i></span>${pct != null ? pct + "%" : kfmt(c.hud.ctxUsed)}</div>` : ""}
@@ -433,8 +537,6 @@ const shortModel = m => String(m || "").replace(/^claude-/, "").replace(/-(\d+)-
 
 function render() {
   document.body.classList.toggle("compact", compact);
-  $("#densityBtn").classList.toggle("lit", compact);
-  $("#notifyBtn").classList.toggle("lit", notify);
   const counts = Object.fromEntries(Object.keys(COLS).map(k => [k, state.cards.filter(c => c.status === k).length]));
   $("#tally").innerHTML = ["blocked", "working", "waiting", "done", "idle"].filter(k => counts[k] || k === "blocked")
     .map(k => `<span class="${k === "blocked" && counts[k] ? "hot" : ""}" style="--c:var(--${k})"><b>${counts[k]}</b>${COLS[k].name.toLowerCase()}</span>`).join("");
@@ -447,13 +549,21 @@ function render() {
   sel.innerHTML = `<option value="">all spaces · ${state.cards.length}</option>` + state.workspaces.map(w =>
     `<option value="${esc(w.id)}" ${w.id === scope ? "selected" : ""}>${esc(w.number)} · ${esc(w.label)} (${state.cards.filter(c => c.workspaceId === w.id).length})</option>`).join("");
   if (scope && !state.workspaces.some(w => w.id === scope)) { scope = ""; sel.value = ""; }
-  $("#chips").innerHTML = order.map(k => `<button class="chip ${hidden.has(k) ? "off" : ""}" data-col="${k}" style="--c:var(--${k})" aria-pressed="${!hidden.has(k)}" title="Show or hide ${COLS[k].name}">${g(COLS[k].g)}<span>${COLS[k].name}</span></button>`).join("");
+  if (!$("#menu").hidden) renderMenu();
 
-  $("#board").innerHTML = columns().map(({ k, cards }) => `<section class="col ${cards.length ? "" : "vacant"}" data-key="${k}" style="--c:var(--${k})">
-      <div class="colhead" draggable="true" title="Drag to reorder">${g(COLS[k].g)}<h2>${COLS[k].name}</h2><span class="n">${cards.length}</span>
-        <button class="hide" data-col="${k}" title="Hide column" aria-label="Hide ${COLS[k].name}">${g("")}</button></div>
-      <div class="cards">${cards.map(cardHTML).join("") || `<div class="empty">${k === "blocked" ? "nobody needs you" : "—"}</div>`}</div>
-    </section>`).join("") || `<div class="empty" style="margin:20px">All columns hidden. Click a chip above to show one.</div>`;
+  if (resizing) return; // don't rebuild the lanes under the pointer; render() runs again on release
+  const lanes = columns(), byKey = Object.fromEntries(lanes.map(l => [l.k, l])), empty = lanes.filter(l => !l.cards.length);
+  const laneBox = (k, color, head, body) => `<section class="col ${k === "rest" ? "rest" : ""} ${laneW[k] ? "sized" : ""}" data-key="${k}" style="--c:${color};${laneW[k] ? `--w:${laneW[k]}px` : ""}">
+      <div class="lane-grip" data-lane="${k}" title="Drag to resize · double-click to reset"></div>
+      <div class="colhead" draggable="true" title="Drag to reorder">${head}</div><div class="cards">${body}</div></section>`;
+  $("#board").innerHTML = order.map(k => {
+    if (k === "rest") return empty.length ? laneBox("rest", "var(--muted)", "<h2>empty</h2>",
+      empty.map(({ k }) => `<div class="mini" style="--c:var(--${k})">${g(COLS[k].g)}${COLS[k].name}</div>`).join("")) : "";
+    const l = byKey[k]; if (!l?.cards.length) return "";
+    return laneBox(k, `var(--${k})`, `${g(COLS[k].g)}<h2>${COLS[k].name}</h2><span class="n">${l.cards.length}</span>
+        <button class="hide" data-col="${k}" title="Hide lane" aria-label="Hide ${COLS[k].name}">${g("\uf070")}</button>`, l.cards.map(cardHTML).join(""));
+  }).join("")
+    || `<div class="empty" style="margin:20px">All lanes hidden: open ${g("\uf013")} to show them.</div>`;
 
   document.title = (counts.blocked ? `(${counts.blocked}) ` : "") + "Herdr Kanban";
   setFavicon(counts.blocked ? "#ffb02e" : counts.working ? "#3ad6ec" : "#63e58f", counts.blocked);
@@ -476,7 +586,6 @@ function connect() {
     $("#banner").style.display = "none"; $("#live").className = "live on"; $("#live").textContent = "live";
     alertChanges(d.cards);
     state = d;
-    $("#sess").textContent = `session ${d.session}${d.readOnly ? " · read-only" : ""}`;
     $("#newBtn").hidden = d.readOnly;
     render();
   };
@@ -510,12 +619,11 @@ function alertChanges(cards) {
 // ---------- terminal ----------
 const term = new Terminal({
   fontFamily: '"Iosevka Nerd Font", "Iosevka", ui-monospace, Menlo, monospace', fontSize: 13, cursorBlink: false, scrollback: 5000, convertEol: true,
-  theme: { background: "#060708", foreground: "#d8dee4", cursor: "#060708", selectionBackground: "#2b3a48",
-    black: "#1b2128", red: "#ff6b6b", green: "#63e58f", yellow: "#ffcc66", blue: "#5aa9ff", magenta: "#c49bff", cyan: "#3ad6ec", white: "#d8dee4",
-    brightBlack: "#5c6773", brightRed: "#ff8e8e", brightGreen: "#86f0a9", brightYellow: "#ffd97a", brightBlue: "#86c1ff", brightMagenta: "#d9bdff", brightCyan: "#7fe3f2", brightWhite: "#ffffff" },
+  theme: xtermTheme(),
 });
 term.open($("#term"));
-let screen = null, lastSize = "", cellRatio = 0.5, convoTimer = null, convoLast = "";
+window.kanbanTerm = term;
+let screen = null, lastSize = "", seenCols = 0, cellRatio = 0.5, convoTimer = null, convoLast = "";
 document.fonts?.ready.then(() => {
   // the real width of one cell per px of font size, for this font
   const s = term.element.querySelector(".xterm-screen");
@@ -531,7 +639,8 @@ function fitTerm() {
     if (`${cols}x${rows}` !== lastSize) { term.resize(cols, rows); lastSize = `${cols}x${rows}`; convoLast = ""; convo(c); }
     return;
   }
-  const cols = c.cols || 120, rows = c.rows || 40;
+  // herdr reports a default 120x40 when no TUI is attached; the widest line on screen is the real width
+  const cols = Math.max(c.cols || 120, seenCols), rows = c.rows || 40;
   if (`${cols}x${rows}` !== lastSize) { term.resize(cols, rows); lastSize = `${cols}x${rows}`; }
   const size = Math.max(8, Math.min(16, Math.floor((w / cols) / cellRatio * 10) / 10));
   if (term.options.fontSize !== size) term.options.fontSize = size;
@@ -564,11 +673,10 @@ function renderHud(c) {
   $("#hud").innerHTML = [
     h.model && seg(`${g(G.claude)} ${esc(shortModel(h.model))}`, "var(--claude)", false, "model"),
     (pct != null || h.ctxUsed) && seg(`${g("")} <span class="bar"><i style="width:${pct ?? 0}%;--lc:${lvl(pct ?? 0)}"></i></span>${kfmt(h.ctxUsed)}${h.ctxMax ? "/" + kfmt(h.ctxMax) : ""}${pct != null ? ` · ${pct}%` : ""}`, "", true, "context window"),
-    h.cost != null && seg(`${g(G.dollar)}${h.cost.toFixed(2)}`, "#ffcc66", false, "session cost"),
+    h.cost != null && seg(`${g(G.dollar)}${h.cost.toFixed(2)}`, "var(--yellow)", false, "session cost"),
     (h.linesAdded != null) && seg(`<span class="add">+${h.linesAdded}</span> <span class="del">−${h.linesRemoved ?? 0}</span>`, "", true, "lines changed"),
     h.durationMs && seg(`${g(G.clock)} ${ago(Date.now() - h.durationMs)}`, "", true, `session time (API ${ago(Date.now() - (h.apiMs || 0))})`),
     c.account && seg(`${g(G[c.account])} ${c.account}`, `var(--${c.account})`, false, "account"),
-    rate("5h", h.rate5h), rate("7d", h.rate7d),
   ].filter(Boolean).join("");
 }
 function renderAsk(c) {
@@ -591,7 +699,7 @@ function select(pane, fresh = false) {
   const el = document.querySelector(`.card[data-pane="${CSS.escape(pane)}"]`);
   el?.classList.add("sel");
   requestAnimationFrame(() => el?.scrollIntoView({ block: "nearest", inline: "nearest" }));
-  term.reset(); term.write("\x1b[?25l"); lastSize = ""; convoLast = ""; $("#msgs").innerHTML = "";
+  term.reset(); term.write("\x1b[?25l"); lastSize = ""; seenCols = 0; convoLast = ""; $("#msgs").innerHTML = "";
   updateSide();
   startView(fresh);
 }
@@ -616,7 +724,12 @@ async function convo(c) {
 function live() {
   $("#termnote").textContent = "live";
   screen = new EventSource("/screen?pane=" + encodeURIComponent(selected));
-  screen.onmessage = e => { const d = JSON.parse(e.data); if (d.error) return term.write(`\r\n\x1b[33m[${d.error}]\x1b[0m`); term.write("\x1b[?25l\x1b[H\x1b[2J\x1b[3J" + d.text); };
+  screen.onmessage = e => {
+    const d = JSON.parse(e.data); if (d.error) return term.write(`\r\n\x1b[33m[${d.error}]\x1b[0m`);
+    const widest = Math.max(0, ...d.text.replace(/\x1b\[[0-9;?]*[A-Za-z]|\x1b\][^\x07]*\x07/g, "").split(/\r?\n/).map(l => [...l].length));
+    if (widest > seenCols) { seenCols = widest; fitTerm(); }
+    term.write("\x1b[?25l\x1b[H\x1b[2J\x1b[3J" + d.text);
+  };
 }
 async function toggleHistory() {
   const c = cardOf(selected);
@@ -700,7 +813,7 @@ function setTyping(on) {
   $("#termwrap").classList.toggle("typing", typing);
   $("#sidefoot").innerHTML = typing
     ? `<span style="color:var(--blocked)">● typing into ${esc(selected)}</span><span>keys go to the terminal</span><span><kbd>ctrl</kbd><kbd>]</kbd> stop typing</span>`
-    : `<span><kbd>v</kbd> chat/terminal</span><span><kbd>i</kbd> type</span><span><kbd>h</kbd> history</span><span><kbd>f</kbd> focus in herdr</span><span><kbd>esc</kbd> close</span>`;
+    : "";
   if (typing) { if (history) toggleHistory(); term.focus(); } else term.blur();
 }
 const SEQ = { "\r": "enter", "\x7f": "backspace", "\b": "backspace", "\t": "tab", "\x1b[Z": "shift+tab", "\x1b": "esc",
@@ -789,8 +902,12 @@ function paletteItems() {
     ...state.cards.map(x => ({ g: KIND[x.agent || "shell"]?.g || G.agent, c: `var(--${x.status})`, t: `${x.workspace} — ${x.label || x.title || x.agent || "shell"}`, hint: COLS[x.status].name, run: () => select(x.pane) })),
     ...state.workspaces.map(w => ({ g: G.space, t: `Show space: ${w.label}`, hint: "filter", run: () => { scope = w.id; store.set("scope", scope); render(); } })),
     { g: G.space, t: "Show all spaces", run: () => { scope = ""; store.set("scope", ""); render(); } },
+    { g: "\uf1fc", c: "var(--magenta)", t: "Themes…", hint: "t", run: openThemes },
+    { g: "\uf074", c: "var(--magenta)", t: "Random theme", run: () => { applyTheme("Random #" + Math.floor(Math.random() * 1e9)); toast(themeName); } },
+    ...Object.keys(THEMES).map(n => ({ g: "\uf1fc", c: THEMES[n][15], t: `Theme: ${n}`, hint: n === themeName ? "current" : (THEMES[n][0] ? "dark" : "light"), run: () => applyTheme(n) })),
+    { g: "\uf07e", t: "Reset lane widths", run: () => { laneW = {}; store.set("laneW", laneW); render(); } },
     { g: "", t: compact ? "Comfortable cards" : "Compact cards", hint: "c", run: () => { compact = !compact; store.set("compact", compact); render(); } },
-    { g: G.bell, t: notify ? "Turn off alerts" : "Turn on alerts (sound + notification)", run: () => $("#notifyBtn").click() },
+    { g: G.bell, t: notify ? "Turn off alerts" : "Turn on alerts (sound + notification)", run: toggleNotify },
     ...Object.keys(COLS).map(k => ({ g: COLS[k].g, c: `var(--${k})`, t: `${hidden.has(k) ? "Show" : "Hide"} column: ${COLS[k].name}`, run: () => { hidden.has(k) ? hidden.delete(k) : hidden.add(k); store.set("hidden", [...hidden]); render(); } })),
   ];
   return items;
@@ -838,11 +955,10 @@ $("#newBtn").onclick = () => openNew();
 $("#palBtn").onclick = openPalette;
 $("#q").oninput = render;
 $("#scope").onchange = e => { scope = e.target.value; store.set("scope", scope); render(); };
-$("#densityBtn").onclick = () => { compact = !compact; store.set("compact", compact); render(); };
-$("#notifyBtn").onclick = async () => {
+async function toggleNotify() {
   if (!notify && "Notification" in window && Notification.permission === "default") await Notification.requestPermission();
   notify = !notify; store.set("notify", notify); if (notify) chime(); render();
-};
+}
 $("#termwrap").addEventListener("mousedown", () => { if (typing) setTimeout(() => term.focus()); });
 
 let dragKey = null;
@@ -883,7 +999,85 @@ document.addEventListener("keydown", e => {
     case "h": toggleHistory(); break;
     case "p": selected && togglePin(selected); break;
     case "c": compact = !compact; store.set("compact", compact); render(); break;
+    case "t": openThemes(); break;
   }
+});
+
+// ---------- theme picker ----------
+function themeCard(name) {
+  const [dark, bg, , panel, , line, , fg, , muted, red, green, yellow, blue, magenta, cyan, orange] = themeOf(name);
+  return `<button type="button" class="tcard ${name === themeName ? "on" : ""}" data-theme="${esc(name)}" style="border-color:${line}">
+    <span class="sw" style="background:${bg}"><span class="ln" style="background:${fg};opacity:.85"></span>
+      <span class="dots">${[yellow, cyan, magenta, green, muted, orange].map(c => `<i style="background:${c}"></i>`).join("")}</span></span>
+    <span class="nm" style="background:${panel};color:${fg}">${esc(name)}<small>${dark ? "dark" : "light"}</small></span></button>`;
+}
+let rolled = [];
+const rollName = () => "Random #" + Math.floor(Math.random() * 1e9);
+function fillThemes() { $("#tgrid").innerHTML = [...Object.keys(THEMES), ...rolled].map(themeCard).join(""); $("#tName").textContent = themeName; }
+function openThemes() {
+  if (!rolled.length) rolled = Array.from({ length: 6 }, rollName);
+  fillThemes(); $("#themeDlg").showModal();
+}
+$("#tgrid").addEventListener("mouseover", e => { const c = e.target.closest("[data-theme]"); if (c) { applyTheme(c.dataset.theme, false); $("#tName").textContent = c.dataset.theme; } });
+$("#tgrid").addEventListener("mouseleave", () => { applyTheme(themeName, false); $("#tName").textContent = themeName; });
+$("#tgrid").addEventListener("click", e => {
+  const c = e.target.closest("[data-theme]"); if (!c) return;
+  applyTheme(c.dataset.theme);
+  document.querySelectorAll(".tcard.on").forEach(x => x.classList.remove("on")); c.classList.add("on");
+});
+$("#tRandom").onclick = () => { const n = rollName(); rolled = [n, ...rolled].slice(0, 12); applyTheme(n); fillThemes(); };
+$("#tClose").onclick = () => $("#themeDlg").close();
+$("#themeDlg").addEventListener("close", () => applyTheme(themeName, false));
+$("#themeDlg").onclick = e => { if (e.target.id === "themeDlg") $("#themeDlg").close(); };
+// ---------- settings menu ----------
+function renderMenu() {
+  const item = (attrs, glyph, label, right = "", c = "") => `<button class="mi" ${attrs}${c ? ` style="--c:${c}"` : ""}>${g(glyph)}<span>${label}</span><span class="r">${right}</span></button>`;
+  $("#menu").innerHTML =
+    item('data-m="theme"', "\uf1fc", "Theme", esc(themeName), "var(--magenta)") +
+    item('data-m="compact"', "\uf0c9", "Compact cards", compact ? "on" : "off") +
+    item('data-m="notify"', G.bell, "Alerts when it needs you", notify ? "on" : "off", "var(--blocked)") +
+    `<hr><div class="lbl">Lanes</div>` +
+    order.filter(k => COLS[k]).map(k => `<button class="mi ${hidden.has(k) ? "off" : ""}" data-col="${k}" style="--c:var(--${k})">${g(COLS[k].g)}<span>${COLS[k].name}</span><span class="r">${g(hidden.has(k) ? "\uf070" : "\uf06e")}</span></button>`).join("") +
+    item('data-m="widths"', "\uf07e", "Reset lane widths") +
+    `<hr><div class="keys">herdr session: ${esc(state.session || "?")}${state.readOnly ? " (read-only)" : ""}<br>j k move · ↵ open · v chat/terminal · i type · n new · f focus in herdr · p pin · t theme · c compact · / filter · ⌘K everything</div>`;
+}
+$("#menuBtn").onclick = e => { e.stopPropagation(); const m = $("#menu"); m.hidden = !m.hidden; if (!m.hidden) renderMenu(); };
+$("#menu").addEventListener("click", e => {
+  e.stopPropagation();
+  const m = e.target.closest("[data-m]")?.dataset.m;
+  if (m === "theme") { $("#menu").hidden = true; openThemes(); }
+  if (m === "compact") { compact = !compact; store.set("compact", compact); render(); }
+  if (m === "notify") toggleNotify();
+  if (m === "widths") { laneW = {}; store.set("laneW", laneW); render(); }
+  const col = e.target.closest("[data-col]")?.dataset.col;
+  if (col) { hidden.has(col) ? hidden.delete(col) : hidden.add(col); store.set("hidden", [...hidden]); render(); renderMenu(); }
+});
+document.addEventListener("click", e => { if (!e.target.closest("#menu, #menuBtn")) $("#menu").hidden = true; });
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("#menu").hidden = true; });
+
+// ---------- lane resizing ----------
+$("#board").addEventListener("pointerdown", e => {
+  const grip = e.target.closest(".lane-grip"); if (!grip) return;
+  e.preventDefault(); e.stopPropagation();
+  const col = grip.closest(".col");
+  resizing = { k: grip.dataset.lane, col, grip, x0: e.clientX, w0: col.getBoundingClientRect().width };
+  grip.setPointerCapture(e.pointerId); grip.classList.add("drag"); document.body.classList.add("resizing");
+});
+$("#board").addEventListener("pointermove", e => {
+  if (!resizing) return;
+  const w = Math.round(Math.max(104, Math.min(1200, resizing.w0 + e.clientX - resizing.x0)));
+  resizing.w = w; resizing.col.classList.add("sized"); resizing.col.style.setProperty("--w", w + "px");
+});
+const endResize = () => {
+  if (!resizing) return;
+  if (resizing.w) { laneW[resizing.k] = resizing.w; store.set("laneW", laneW); }
+  resizing.grip.classList.remove("drag"); document.body.classList.remove("resizing"); resizing = null; render();
+};
+$("#board").addEventListener("pointerup", endResize);
+$("#board").addEventListener("pointercancel", endResize);
+$("#board").addEventListener("dblclick", e => {
+  const grip = e.target.closest(".lane-grip"); if (!grip) return;
+  delete laneW[grip.dataset.lane]; store.set("laneW", laneW); render();
 });
 
 setTyping(false);

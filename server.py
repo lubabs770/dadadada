@@ -601,7 +601,7 @@ class Board:
                 "cwd": a.get("foreground_cwd") or a.get("cwd"),
                 "branch": git_branch(a.get("foreground_cwd") or a.get("cwd")),
                 "focused": a.get("focused", False),
-                "cols": rect.get("width"), "rows": rect.get("height"),
+                "cols": rect.get("width"), "rows": (pane.get("scroll") or {}).get("viewport_rows") or rect.get("height"),
                 "waiting": waiting,
                 **self.claude_info(a.get("agent"), (a.get("agent_session") or {}).get("value")),
             })
@@ -620,7 +620,7 @@ class Board:
                 "tab": tabs.get(p["tab_id"], {}).get("number"), "label": p.get("label"),
                 "title": p.get("terminal_title_stripped") or p.get("terminal_title") or "", "name": None,
                 "cwd": cwd, "branch": git_branch(cwd), "focused": p.get("focused", False),
-                "cols": rect.get("width"), "rows": rect.get("height"), "waiting": [],
+                "cols": rect.get("width"), "rows": (p.get("scroll") or {}).get("viewport_rows") or rect.get("height"), "waiting": [],
             })
         cards += self.outside_cards({(a.get("agent_session") or {}).get("value") for a in snap["agents"]}, now)
         for gone in set(self.since) - {c["pane"] for c in cards}:
