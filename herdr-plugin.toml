@@ -1,0 +1,28 @@
+# Herdr Kanban: a web board of your agents at http://127.0.0.1:7391/
+# Linked with `herdr plugin link ~/code/herdr-kanban`.
+
+id = "local.kanban"
+name = "Kanban"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Web kanban board of your agents at http://127.0.0.1:7391/"
+platforms = ["macos", "linux"]
+
+# Runs when the herdr server starts; kanban.sh detaches the board and returns.
+[[startup]]
+platforms = ["macos", "linux"]
+command = ["./kanban.sh", "start"]
+
+[[actions]]
+id = "open"
+title = "Kanban: open board"
+description = "Open the kanban board in the browser"
+contexts = ["global"]
+command = ["./kanban.sh", "open"]
+
+[[actions]]
+id = "restart"
+title = "Kanban: restart"
+description = "Start a fresh kanban server in place of the running one"
+contexts = ["global"]
+command = ["./kanban.sh", "start"]
